@@ -1,4 +1,4 @@
 supervised/convolutional-neural-networks/dataset
-checkpoints/
+ckpt/
 
 __pycache__
