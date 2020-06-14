@@ -52,7 +52,6 @@ from tensorflow.keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Dense
-from tensorflow.keras.callbacks import ModelCheckpoint
 
 def build_classifier(): # Function to build the ANN
     classifier = Sequential()

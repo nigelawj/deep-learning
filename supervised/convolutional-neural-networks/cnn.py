@@ -7,7 +7,7 @@
 # Importing the Keras libraries and packages
 from tensorflow.keras.models import Sequential, load_model
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
-from tensorflow.keras.callbacks import ModelCheckpoint
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping
 
 def create_model():
     # Initialising the CNN
@@ -57,41 +57,50 @@ test_set = test_datagen.flow_from_directory('./dataset/test_set',
                                             batch_size=32,
                                             class_mode='binary')
 
-import os
+import os, re
 
 # Prepare a directory to store all the checkpoints.
 checkpoint_dir = '.\ckpt' # place sample checkpoint in this folder if needed
-if not os.path.exists(checkpoint_dir):
+if (not os.path.exists(checkpoint_dir)):
     os.makedirs(checkpoint_dir)
 
 # Either restore the latest model, or create a fresh one
 # if there is no checkpoint available.
 checkpoints = [(checkpoint_dir + '\\' + name) for name in os.listdir(checkpoint_dir)]
 
-if checkpoints:
+if (checkpoints):
     latest_checkpoint = max(checkpoints, key=os.path.getctime)
 
     print('Restoring from', latest_checkpoint)
     classifier = load_model(latest_checkpoint)
+    latest_epoch = int(re.search('epoch=(\d*)-', latest_checkpoint).group(1))
 else:
     classifier = create_model()
+    latest_epoch = 0
 
-    callbacks = [
-        # This callback saves a SavedModel every 100 batches.
-        # We include the training loss in the folder name.
-        ModelCheckpoint(
-            filepath=os.path.join(checkpoint_dir, 'ckpt-loss={loss:.2f}'),
-            save_weights_only=True
-            #save_best_only=True
-        )
-    ]
-
-    classifier.fit(
-        training_set,
-        epochs=25,
-        validation_data=test_set,
-        callbacks=callbacks
+# Comment this block out if not repeating training of model
+###
+callbacks = [
+    EarlyStopping(patience=2), # stops and saves modelcheckpoint if no improvement in monitored quantity after 2 epochs
+    ModelCheckpoint(
+        # embed loss in checkpoint name instead of val_loss upon KeyboardInterrupt as val_loss is not available in between epochs; save_best_only still saves by best (min) val_loss
+        filepath=os.path.join(checkpoint_dir, 'epoch={epoch}-ckpt-loss={loss:.2f}'),
+        save_best_only=True,
+        monitor='val_loss', # default
+        mode='auto', # default
+        save_freq='epoch', # default
+        # period=2, # option to save every k epochs
     )
+]
+
+classifier.fit(
+    training_set,
+    epochs=25,
+    validation_data=test_set,
+    initial_epoch=latest_epoch, # resume from latest epoch
+    callbacks=callbacks
+)
+###
 
 # Part 3 - Making new predictions
 import numpy as np

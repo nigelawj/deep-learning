@@ -1,4 +1,5 @@
 supervised/convolutional-neural-networks/dataset
 ckpt/
 
+.vscode/
 __pycache__

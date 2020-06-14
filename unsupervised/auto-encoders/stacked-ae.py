@@ -1,4 +1,4 @@
-# AutoEncoders
+# Stacked Autoencoders
 
 # Importing the libraries
 import numpy as np
