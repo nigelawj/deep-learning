@@ -1,0 +1,4 @@
+supervised/convolutional-neural-networks/dataset
+checkpoints/
+
+__pycache__
