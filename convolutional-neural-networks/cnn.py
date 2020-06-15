@@ -84,7 +84,7 @@ callbacks = [
     EarlyStopping(patience=2), # stops and saves modelcheckpoint if no improvement in monitored quantity after 2 epochs
     ModelCheckpoint(
         # embed loss in checkpoint name instead of val_loss upon KeyboardInterrupt as val_loss is not available in between epochs; save_best_only still saves by best (min) val_loss
-        filepath=os.path.join(checkpoint_dir, 'epoch={epoch}-ckpt-loss={loss:.2f}'),
+        filepath=os.path.join(checkpoint_dir, 'epoch={epoch}-loss={loss:.2f}'),
         save_best_only=True,
         monitor='val_loss', # default
         mode='auto', # default
