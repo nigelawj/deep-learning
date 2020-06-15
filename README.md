@@ -1,5 +1,5 @@
 # deep-learning
-Some simple starter codes for referencing DL basics
+Some simple starter .py and .ipynb codes for referencing DL basics
 - Artificial Neural Networks
 - Convolutional Neural Networks
 - Recurrent Neural Networks (LSTM)
