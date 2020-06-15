@@ -1,4 +1,4 @@
-# Recurrent Neural Network
+# Recurrent Neural Network - Predict Google Stock prices using LSTM
 
 # Part 1 - Data Preprocessing
 
@@ -38,9 +38,7 @@ X_train = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
 
 # Importing the Keras libraries and packages
 from tensorflow.keras.models import Sequential
-from tensorflow.keras.layers import Dense
-from tensorflow.keras.layers import LSTM
-from tensorflow.keras.layers import Dropout
+from tensorflow.keras.layers import Dense, LSTM, Dropout
 
 # Initialising the RNN
 regressor = Sequential()

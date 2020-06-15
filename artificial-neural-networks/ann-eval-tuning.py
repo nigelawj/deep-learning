@@ -1,4 +1,4 @@
-# Artificial Neural Network
+# Artificial Neural Network - Predicting probabilities a customer leaves the bank
 
 # Part 1 - Data Preprocessing
 
