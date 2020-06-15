@@ -120,4 +120,4 @@ for user_id in range(num_users):
 		test_loss += np.sqrt(loss.data*mean_corrector)
 		s += 1.
 	
-print(f'test loss: {test_loss/s}\n') # achieved a loss of 0.951!
+print(f'test loss: {test_loss/s}\n') # achieved a loss of 0.951! - i.e. prediction error of < 1 star (within 1 star error margin)
