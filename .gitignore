@@ -1,6 +1,8 @@
 artificial-neural-networks/fashion_mnist_model
-convolutional-neural-networks/dataset
-ckpt/
+dataset/
+checkpoints/
+ml-1m/
+ml-100k/
 
 .vscode/
 __pycache__
