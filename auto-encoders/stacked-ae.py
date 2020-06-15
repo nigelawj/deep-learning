@@ -1,4 +1,4 @@
-# Stacked Autoencoders
+# Stacked Autoencoders - Predicts what a user would rate on a movie (0-5) that was not yet rated; can be used in recommender systems
 
 # Importing the libraries
 import numpy as np
@@ -9,18 +9,19 @@ import torch.nn.parallel
 import torch.optim as optim
 import torch.utils.data
 from torch.autograd import Variable
+from pathlib import Path
 
 # Importing the dataset
-movies = pd.read_csv('ml-1m/movies.dat', sep='::', header=None, engine='python', encoding='latin-1')
-users = pd.read_csv('ml-1m/users.dat', sep='::', header=None, engine='python', encoding='latin-1')
-ratings = pd.read_csv('ml-1m/ratings.dat', sep='::', header=None, engine='python', encoding='latin-1')
+movies = pd.read_csv(Path('ml-1m/movies.dat'), sep='::', header=None, engine='python', encoding='latin-1')
+users = pd.read_csv(Path('ml-1m/users.dat'), sep='::', header=None, engine='python', encoding='latin-1')
+ratings = pd.read_csv(Path('ml-1m/ratings.dat'), sep='::', header=None, engine='python', encoding='latin-1')
 
 # Preparing the training set and the test set
 # Take only 1 train_test_split (u1)
-training_set = pd.read_csv('ml-100k/u1.base', delimiter='\t') # sep and delimiter are the same
+training_set = pd.read_csv(Path('ml-100k/u1.base'), delimiter='\t') # sep and delimiter are the same
 training_set = np.array(training_set, dtype='int')
 
-test_set = pd.read_csv('ml-100k/u1.test', delimiter='\t')
+test_set = pd.read_csv(Path('ml-100k/u1.test'), delimiter='\t')
 test_set = np.array(test_set, dtype='int')
 
 # Getting the number of users and movies

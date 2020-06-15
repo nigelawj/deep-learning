@@ -1,4 +1,4 @@
-# Restricted Boltzmann Machines
+# Restricted Boltzmann Machines - Predicts what a user would rate on a movie (binary) that was not yet rated; can be used in recommender systems
 
 # Importing the libraries
 import numpy as np
@@ -9,18 +9,19 @@ import torch.nn.parallel
 import torch.optim as optim
 import torch.utils.data
 from torch.autograd import Variable
+from pathlib import Path
 
 # Importing the dataset
-movies = pd.read_csv('ml-1m/movies.dat', sep='::', header=None, engine='python', encoding='latin-1')
-users = pd.read_csv('ml-1m/users.dat', sep='::', header=None, engine='python', encoding='latin-1')
-ratings = pd.read_csv('ml-1m/ratings.dat', sep='::', header=None, engine='python', encoding='latin-1')
+movies = pd.read_csv(Path('ml-1m/movies.dat'), sep='::', header=None, engine='python', encoding='latin-1')
+users = pd.read_csv(Path('ml-1m/users.dat'), sep='::', header=None, engine='python', encoding='latin-1')
+ratings = pd.read_csv(Path('ml-1m/ratings.dat'), sep='::', header=None, engine='python', encoding='latin-1')
 
 # Preparing the training set and the test set
 # Take only 1 train_test_split (u1)
-training_set = pd.read_csv('ml-100k/u1.base', delimiter='\t') # sep and delimiter are the same
+training_set = pd.read_csv(Path('ml-100k/u1.base'), delimiter='\t') # sep and delimiter are the same
 training_set = np.array(training_set, dtype='int')
 
-test_set = pd.read_csv('ml-100k/u1.test', delimiter='\t')
+test_set = pd.read_csv(Path('ml-100k/u1.test'), delimiter='\t')
 test_set = np.array(test_set, dtype='int')
 
 # Getting the number of users and movies
@@ -129,7 +130,7 @@ for epoch in range(1, num_epochs + 1):
 		train_loss += torch.mean(torch.abs(v0[v0>=0] - vk[v0>=0]))
 		s += 1.
 
-	print(f'epoch: {epoch}\nloss: {train_loss/s}')
+	print(f'epoch: {epoch}\nloss: {train_loss/s}') # ~0.248
 
 # Testing the RBM
 test_loss = 0
@@ -146,4 +147,4 @@ for user_id in range(0, num_users):
 		test_loss += torch.mean(torch.abs(vt[vt>=0] - v[vt>=0]))
 		s += 1.
 
-print(f'test loss: {test_loss/s}')
+print(f'test loss: {test_loss/s}') # ~0.243 - loss indicates 

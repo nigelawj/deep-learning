@@ -1,4 +1,4 @@
-# Convolutional Neural Network
+# Convolutional Neural Network - predict binary target (cat or dog)
 #
 # Dataset must be downloaded and split into training/test directories
 
@@ -39,40 +39,52 @@ def create_model():
 # Part 2 - Fitting the CNN to the images
 # NOTE: Dataset is not included
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
+from pathlib import Path
 
-train_datagen = ImageDataGenerator(rescale=1./255,
-                                shear_range=0.2,
-                                zoom_range=0.2,
-                                horizontal_flip=True)
+train_datagen = ImageDataGenerator(
+    rescale=1./255,
+    shear_range=0.2,
+    zoom_range=0.2,
+    horizontal_flip=True
+)
 
 test_datagen = ImageDataGenerator(rescale=1./255)
 
-training_set = train_datagen.flow_from_directory('./dataset/training_set',
-                                                target_size=(64, 64),
-                                                batch_size=32,
-                                                class_mode='binary')
+training_set = train_datagen.flow_from_directory(
+    Path('./dataset/training_set'),
+    target_size=(64, 64),
+    batch_size=32,
+    class_mode='binary'
+)
 
-test_set = test_datagen.flow_from_directory('./dataset/test_set',
-                                            target_size=(64, 64),
-                                            batch_size=32,
-                                            class_mode='binary')
+test_set = test_datagen.flow_from_directory(
+    Path('./dataset/test_set'),
+    target_size=(64, 64),
+    batch_size=32,
+    class_mode='binary'
+)
 
-import os, re
+import re, os
 
 # Prepare a directory to store all the checkpoints.
-checkpoint_dir = '.\ckpt' # place sample checkpoint in this folder if needed
-if (not os.path.exists(checkpoint_dir)):
-    os.makedirs(checkpoint_dir)
+checkpoint_dir = Path('./checkpoints') # place sample checkpoint in this folder if needed
+checkpoint_dir.mkdir(exist_ok=True, parents=True)
 
 # Either restore the latest model, or create a fresh one
 # if there is no checkpoint available.
-checkpoints = [(checkpoint_dir + '\\' + name) for name in os.listdir(checkpoint_dir)]
+checkpoints = [x for x in checkpoint_dir.iterdir() if x.is_dir()]
 
 if (checkpoints):
     latest_checkpoint = max(checkpoints, key=os.path.getctime)
+    latest_checkpoint = str(latest_checkpoint) # need to convert into str format
 
     print('Restoring from', latest_checkpoint)
-    classifier = load_model(latest_checkpoint)
+    try:
+        classifier = load_model(latest_checkpoint)
+    except:
+        print('Unable to load model. Check your model checkpoints folder!')
+        sys.exit(1)
+
     latest_epoch = int(re.search('epoch=(\d*)-', latest_checkpoint).group(1))
 else:
     classifier = create_model()
@@ -84,7 +96,7 @@ callbacks = [
     EarlyStopping(patience=2), # stops and saves modelcheckpoint if no improvement in monitored quantity after 2 epochs
     ModelCheckpoint(
         # embed loss in checkpoint name instead of val_loss upon KeyboardInterrupt as val_loss is not available in between epochs; save_best_only still saves by best (min) val_loss
-        filepath=os.path.join(checkpoint_dir, 'epoch={epoch}-loss={loss:.2f}'),
+        filepath=str(Path(checkpoint_dir, 'epoch={epoch}-loss={loss:.2f}')),
         save_best_only=True,
         monitor='val_loss', # default
         mode='auto', # default
@@ -106,25 +118,26 @@ classifier.fit(
 import numpy as np
 from tensorflow.keras.preprocessing import image
 
-test_image = image.load_img('dataset/single_prediction/cat_or_dog_1.jpg', target_size=(64, 64))
+test_image = image.load_img(Path('dataset/single_prediction/cat_or_dog_1.jpg'), target_size=(64, 64))
 test_image = image.img_to_array(test_image)
 # classifier takes batch input; must add new dimension
 test_image = np.expand_dims(test_image, axis=0)
 result = classifier.predict(test_image)
-training_set.class_indices
+
+print(training_set.class_indices)
 if (result[0][0] == 1):
     prediction = 'dog'
 else:
     prediction = 'cat'
 
-print(prediction) # dog
+print(prediction) # dog!
 
-test_image = image.load_img('dataset/single_prediction/cat_or_dog_2.jpg', target_size=(64, 64))
-test_image = image.img_to_array(test_image)
-# classifier takes batch input; must add new dimension
-test_image = np.expand_dims(test_image, axis=0)
-result = classifier.predict(test_image)
-training_set.class_indices
+test_image2 = image.load_img(Path('dataset/single_prediction/cat_or_dog_2.jpg'), target_size=(64, 64))
+test_image2 = image.img_to_array(test_image2)
+test_image2 = np.expand_dims(test_image2, axis=0)
+result = classifier.predict(test_image2)
+
+print(training_set.class_indices)
 if (result[0][0] == 1):
     prediction = 'dog'
 else:
